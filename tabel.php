@@ -1,32 +1,18 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'];
+    $F_Name = $_POST['F_Name'];
+    $L_Name = $_POST['L_Name'];
+    $email = $_POST['email'];
+    $email2 = $_POST['email2'];
+    $profesi = $_POST['profesi'];
 
-function csvToJson($csvUrl) {
-    $csvData = []:
-
-    if (($handle = fopen($csvUrl, 'r'))!== false ){
-        while(($row = fgetcsv($handle)) !== false){
-            $csvData[] = $row;
-        }
-        fclose($handle);
+    $file = 'datapribadi.csv';
+    $data = "$id, $F_Name, $L_Name, $email, $email2, $profesi\n";
+    if (file_put_contents($file, $data, FILE_APPEND | LOCK_EX)) {
+        echo 'Data berhasil disimpan.';
+    } else {
+        echo 'Gagal menyimpan data ke file.';
     }
-
-    $headers = array_shift($csvData);
-
-    $jsonArray =[];
-    foreach ($csvData as $row) {
-        $jsonArrayItem = array();
-        for ($i = 0; $i < count($row); $i++){
-            $jsonArrayItem[$headers[$i]] = $row[$i];
-        }
-        $jsonArray[] = $jsonArrayItem;
-    }
-    return json_encode($jsonArray);
 }
-
-$csvUrl = 'https://raw.githubusercontent.com/jasminneenf/weeknine/main/datapribadi.csv';
-$jsonData = csvToJson($csvUrl);
-
-header('Content-Type: application/json');
-
-echo $jsonData
 ?>
