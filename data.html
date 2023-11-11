@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Praktikum W9</title>
+    <style>
+    body {
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    background-color: rgb(247, 217, 222); 
+    text-align: center;
+    }
+
+    h1 {
+    text-align: center;
+    font-weight: 800;
+    font-size: 36px;
+    color: palevioletred; 
+    }
+
+    label {
+    font-weight: bold;
+    }
+
+    #url {
+    font-family: Montserrat, sans-serif;
+    width: 80%;
+    padding: 12px;
+    margin: 10px auto;
+    display: block;
+    background-color: rgb(255, 216, 222); 
+    color: palevioletred;
+    border-radius: 12px;
+    border: 3px solid palevioletred;
+    }
+
+    button {
+    font-family: Montserrat, sans-serif;
+    font-weight: bold;
+    display: block;
+    margin: 0 auto;
+    padding: 12px 24px;
+    background-color: palevioletred; 
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 12px;
+    }
+
+    button:hover {
+    background-color: pink; 
+    }
+
+    #myForm {
+    font-family: 'Montserrat', sans-serif;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: palevioletred;
+    border-radius: 12px;
+    }
+
+    label {
+    display: block;
+    margin-bottom: 8px;
+    color: palevioletred;
+    }
+
+    input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid pink;
+    border-radius: 8px;
+    box-sizing: border-box;
+    }
+
+    input[type="button"] {
+    background-color: palevioletred;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 12px;
+    }
+
+    input[type="button"]:hover {
+    background-color: pink;
+    }
+        
+    #table-container .table-controls-right button {
+    padding: 10px 20px;
+    background-color: palevioletred; 
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-left: 10px; 
+    }
+
+    #table-container .table-controls-right button:hover {
+      background-color: palevioletred;
+    }
+
+    table {
+    font-family: Montserrat, sans-serif;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 12px;
+    border-collapse: collapse;
+    }
+
+    th, td, tr {
+    border: 2px solid grey;
+    padding: 10px;
+    text-align: center;
+    }
+
+    th {
+    border: 2px solid grey;
+    background-color: palevioletred; 
+    }
+    </style>
+</head>
+<body>
+    <h1>Application Programming Interface</h1>
+    <label for="text-field" autocomplete="off">URL Link:</label><br>
+    <input type="text" id="text-field" name="URL" placeholder="Masukkan URL Link"><br>
+    <h4> </h4>
+    <button onclick="fetchData()">Submit</button><br>
+    <h4> </h4>
+    <div id="table-container">
+      <div class="table-controls">
+        <div class="table-controls-right">
+          <span>Cari: </span>
+          <input type="text" id="search-input" onkeyup="searchTable()" />
+          <button onclick="sortTable(0)">Sort</button>
+        </div>
+      </div>
+    </div>
+    <form id="newForm">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" autocomplete="off" required><br>
+        <label for="F_Name">First Name:</label>
+        <input type="text" id="F_Name" name="F_Name" autocomplete="username" required><br>
+        <label for="L_Name">Last Name:</label>
+        <input type="text" id="L_Name" name="L_Name" autocomplete="username" required><br>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" autocomplete="email" required><br>
+        <label for="email2">Email 2:</label>
+        <input type="text" id="email2" name="email2" autocomplete="email" required><br>
+        <label for="profesi">Profesi:</label>
+        <input type="text" id="profesi" name="profesi" autocomplete="off" required><br>
+        <input type="button" value="Save" onclick="callPhpScript()">
+    </form>
+    <table id="data-table"></table>
+    <div id="pagination">
+      <button id="pagination-prev" onclick="changePage(-1);" style="float: left;">Sebelumnya</button>
+      <span id="pagination-info" style="display: inline-block; margin: 0 auto;"></span>
+      <button id="pagination-next" onclick="changePage(1);" style="float: right;">Selanjutnya</button>    
+    </div>
+    <script>
+        function fetchData() { 
+          const urlInput = document.getElementById('text-field').value;
+          const tableContainer = document.getElementById('table-container');
+          const dataTable = document.getElementById('data-table');
+          const xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              const data = JSON.parse(xhr.responseText);
+              dataTable.innerHTML = '';
+              const headerRow = document.createElement('tr');
+              for (const key in data[0]) {
+                if (data[0].hasOwnProperty(key)) {
+                  const headerCell = document.createElement('th');
+                  headerCell.textContent = key;
+                  headerRow.appendChild(headerCell);
+                }
+              }
+              dataTable.appendChild(headerRow);
+    
+              data.forEach(function(item) {
+                const dataRow = document.createElement('tr');
+                for (const key in item) {
+                  if (item.hasOwnProperty(key)) {
+                    const dataCell = document.createElement('td');
+                    dataCell.textContent = item[key];
+                    dataRow.appendChild(dataCell);
+                  }
+                }
+                dataTable.appendChild(dataRow);
+              });
+              tableContainer.style.display = 'block';
+            }
+          };
+          xhr.open('GET', urlInput, true);
+          xhr.send();
+        }
+        let currentPage = 1;
+        const entriesPerPage = 10; 
+
+        function displayTableData() {
+            const startIndex = (currentPage - 1) * entriesPerPage;
+            const endIndex = startIndex + entriesPerPage;
+            const dataTable = document.getElementById('data-table');
+            const data = Array.from(dataTable.getElementsByTagName('tr'));
+
+            data.forEach(row => {
+            row.style.display = 'none';
+            });
+
+        for (let i = startIndex; i < endIndex && i < data.length; i++) {
+          data[i].style.display = '';
+            }
+        }
+
+        function updatePagination() {
+            const dataTable = document.getElementById('data-table');
+            const totalEntries = dataTable.getElementsByTagName('tr').length - 1; // Kurangi satu untuk header
+    
+            const totalPages = Math.ceil(totalEntries / entriesPerPage);
+            const paginationInfo = `Menampilkan ${currentPage} - ${Math.min(currentPage + entriesPerPage - 1, totalEntries)} dari ${totalEntries} entri`;
+    
+            document.getElementById('pagination-info').textContent = paginationInfo;
+            document.getElementById('pagination-prev').disabled = currentPage === 1;
+            document.getElementById('pagination-next').disabled = currentPage === totalPages;
+        }
+
+        function sortTable(columnIndex) {
+          const dataTable = document.getElementById('data-table');
+          const rows = Array.from(dataTable.getElementsByTagName('tr'));
+    
+          rows.shift(); // Remove header
+    
+          rows.sort((a, b) => {
+            const valueA = a.getElementsByTagName('td')[columnIndex].textContent;
+            const valueB = b.getElementsByTagName('td')[columnIndex].textContent;
+    
+            return valueA.localeCompare(valueB);
+          });
+    
+          dataTable.innerHTML = '';
+          rows.forEach(row => {
+            dataTable.appendChild(row);
+          });
+    
+          displayTableData();
+          updatePagination();
+        }
+
+
+        function searchTable() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const dataTable = document.getElementById('data-table');
+            const rows = Array.from(dataTable.getElementsByTagName('tr'));
+    
+            rows.shift(); // Hapus header
+    
+            rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+            const rowText = Array.from(cells).map(cell => cell.textContent).join(' ').toLowerCase();
+            if (rowText.includes(searchInput)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+        }
+
+        function changePage(offset) {
+            currentPage += offset;
+            if (currentPage < 1) {
+            currentPage = 1;
+            }
+            displayTableData();
+            updatePagination();
+        }
+        window.onload = () => {
+            displayTableData();
+            updatePagination();
+        }
+        function callPhpScript() {
+            const id = document.getElementById('id').value;
+            const F_Name = document.getElementById('F_Name').value;
+            const L_Name = document.getElementById('L_Name').value;
+            const email = document.getElementById('email').value;
+            const email2 = document.getElementById('email2').value;
+            const profesi = document.getElementById('profesi').value;
+                
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Success');
+                } else {
+                    alert('Terjadi kesalahan saat mengirim data.');
+                }
+            };
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('F_Name', F_Name);
+            formData.append('L_Name', L_Name);
+            formData.append('email', email);
+            formData.append('email2', email2);
+            formData.append('profesi', profesi);
+            
+            xhr.open('POST', 'proses.php', true);
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
