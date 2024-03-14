@@ -242,3 +242,107 @@ head(xbull)
 par(mfrow=c(1,2))
 hist(xb,main="Distribusi Weibull Transformasi Invers")
 hist(xbull,main="Distribusi Weibull fungsi R")
+
+#week5
+set.seed(100) # mengatur seed untuk menghasilkan angka acak sebanyak 100
+z <- runif(100) # menghasilkan sampel angka acak antara 0 dan 1
+x <- -2:2 # nilai diskrit dari -2 hingga 2
+
+# Metode invers transform
+get.x <- function(data) {
+  result <- numeric(length(data))
+  
+  for (i in seq_along(data)) {
+    if (data[i] <= 0.2) {
+      result[i] <- -2
+    } else if (data[i] > 0.2 & data[i] <= 0.35) {
+      result[i] <- -1
+    } else if (data[i] > 0.35 & data[i] <= 0.55) {
+      result[i] <- 0
+    } else if (data[i] > 0.55 & data[i] <= 0.9) {
+      result[i] <- 1
+    } else {
+      result[i] <- 2
+    }
+  }
+  
+  return(result)
+}
+simulated_data <- get.x(z)
+
+#Membuat data frame dari hasil perhitungan
+df <- data.frame(z, simulated_data)
+names(df) <- c("z", "simulated_data")
+df
+
+n <- 100 #menentukan jumlah sampel yang akan digunakan
+sampel <- c(-2, -1, 0, 1, 2) #nilai dari variabel acak diskrit
+fx <- c(0.20, 0.15, 0.20, 0.35, 0.10)
+(Fx <- cumsum(fx)) #menghitung distribusi kumulatif untuk mementukan ambang batas invers transorm
+
+xsample <-sample(sampel, size=n, replace=TRUE, prob=fx)
+
+min_get <- function(uval) {
+  min(sampel[Fx >= uval])
+}
+
+xsim <- sapply(runif(n), min_get)
+
+options(repr.plot.width=10, repr.plot.height=5) #mengatur tinggi dan lebar dari histogram
+par(mfrow=c(1,2)) #mengatur letak histogram sehingga menampilkan dua plot yang berdampingan.
+
+hist(xsim)
+hist(xsample)
+
+n <- 10000 #menentukan jumlah sampel sebanyak 10000
+p <- .5 #memetapkan nilai probabilitas yaitu 0.5
+
+kumulatif <- c(1 - p, 1)
+samplez <- c(0, 1)
+u <- runif(n)
+
+min_get <- function(uval) {
+  min(samplez[kumulatif >= uval])
+} #digunakan untuk melakukan invers transformasi
+xsim <- sapply(u, min_get)
+```
+
+```{r}
+help(rbinom) #perintah yang digunakan untuk mengetahui tentang fungsi rbinom
+
+hist(rbinom(n, 1, prob = 0.5))
+
+n <- 100 #menentukan jumlah sampel sebanyak 100
+p <- .75 #menentukan nilai probabilitas sebesar 0.75
+
+u <- runif(n) #menghasilkan sampel acak antara 0 dan 1 sebanyak n kali
+xsim_itm <- log(1 - u, 1 - p)
+```
+
+```{r}
+cdf <- function(i) {
+  return (1-(1-p)^(i+1))
+} #fungsi untuk menghitung nilai distribusi kumulatif
+cumulativ <- sapply(0:1000, cdf) #fungsi sapply digunakan untuk menghasilkan nilai distribusi kumulatif untuk setiap nilai i dari 0 hingga 1000
+sample_room <- c(0:1000) #variabel yang berisi semua nilai yang mungkin dari variabel acak antara 0 hingga 1000
+u <- runif(n) # menghasilkan sampel acak antara 0 dan 1
+
+min_get <- function(uval) {
+  min(min(sample_room[cumulativ >= uval]), 1000)
+}
+xsim <- sapply(u, min_get)
+```
+
+```{r}
+hist(rgeom(n,p))
+
+set.seed(100) #menentukan angka acak yang akan dihasilkan sebanyak 100
+n <- 1000 #jumlah sampel yang digunakan sebanyak 1000
+p <- 0.4 #menetapkan nilai probabilitas yakni 0.4
+u <- runif(n) #menghasilkan n sampel acak antara 0 dan 1
+
+
+binomint <- as.integer(u > 1 - p) #variabel yang berisi hasil simulasi yang membandingan setiap nilai acak 'u' dengan nilai 1-p
+mean(binomint)
+var(binomint)
+
