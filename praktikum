@@ -1,0 +1,244 @@
+library(dplyr)
+nomer <- seq(1,8, by = 1)
+nama <- c("Denora", "Rena", "Sam", "John", "Kira", "Zena", "William", "Ahlan")
+gender <- rep(c("Perempuan", "Laki-Laki"), each = 2)
+salary <- seq(40000,5000, by = -5000)
+age <- rep(c("25", "26"), each = 4)
+
+data_frame_satu <- data.frame(No = nomer, Nama = nama, Jenis_Kelamin = gender, Gaji = salary, Umur = age)
+data_frame_satu
+
+deteksi <- function(n) {
+  for (i in 1:n) {
+    if (i %% 2 == 0) {
+      print(paste(i, "adalah bilangan genap"))
+    } else {
+      print(paste(i, "adalah bilangan ganjil"))
+    }
+  }
+}
+
+deteksi(20)
+
+library(readr)
+setwd("C:/Users/ASUS/Downloads")
+data <- read.csv("Life Expectancy Data.csv", sep = ',')
+tahun <- subset(data, Year == 2015)
+
+count <- table(tahun$Status)
+count
+
+indonesia <- subset(data, Country == "Indonesia" )
+
+meanz <- mean(indonesia$Life.expectancy)
+medianz <- median(indonesia$Life.expectancy)
+minz <- min(indonesia$Life.expectancy)
+maxz <- max(indonesia$Life.expectancy)
+
+print(paste("Mean Life Expectancy:", meanz))
+print(paste("Median Life Expectancy:", medianz))
+print(paste("Min Life Expectancy:", minz))
+print(paste("Max Life Expectancy:", maxz))
+
+library(dplyr)
+tahunz <- data %>% filter(Year == 2010)
+
+median_value = median(tahunz$GDP, na.rm=TRUE)
+tahunz$GDP[is.na(tahunz$GDP)] <- median_value
+
+tahunz %>%
+  group_by(Status) %>% 
+  summarize(mean = mean(GDP), median = median(GDP), min = min(GDP), max = max(GDP))
+
+x1 = c(1,2,3,4,5,6,7,8,9,10)
+x1
+x2 = c(1:10)
+x2
+x3 = seq(1:10)
+x3
+x4 = 1:10
+x4
+x5 = seq(from=1, to=10, by=1)
+x5
+
+m1 <- matrix(x1, nrow=5)
+m1
+
+regresi <- read_csv("C:/Users/ASUS/Downloads/regresi.csv")
+View(regresi)
+
+y <- c(regresi[, 5])
+y
+
+vec1 <- rep(1,13)
+
+x <- cbind(vec1, regresi[,1:4])
+x <- as.matrix(x)
+x
+
+xtrans <- t(x)
+xtrans <- as.matrix(xtrans)
+xtrans
+
+xtr <- xtrans%*%x
+xtr
+
+inv <- solve(xtr)
+inv
+
+
+invx <- inv%*%xtrans
+invx
+
+
+attach(mtcars)
+sum(wt)/nrow(mtcars)
+mean(wt)
+sum(mtcars$wt)/nrow(mtcars) 
+mean(mtcars$wt) 
+
+aver <- function(x) {
+  n <- length(x)
+  xbar <- 0
+  for (i in c(1:n))
+  {
+    xbar <- xbar + ((x[i]/n))
+  }
+  xbar
+}
+aver(wt)
+
+tabel <- sort(mtcars$wt) 
+head(tabel)
+n <- length(tabel) 
+p <- 0.5 
+np <- n*p
+x13 <- tabel[13] 
+x15 <- tabel[15] 
+median <- (x13+x15)/2 
+median
+
+table_cyl <- table(cyl)
+print(table_cyl)
+
+l <- length(levels(factor(wt)))
+
+modus <- names(sort(table_cyl)[l])
+
+print(modus)
+
+moduz <- function(x) {
+  unik <- unique(x)
+  unik[which.max(tabulate(match(x, unik)))]
+}
+
+mode <- moduz(cyl)
+print(mode)
+
+sdev <- function(x){
+  n <- length(x)
+  dev <- 0
+  for (i in 1:n)
+  {
+    dev <- dev + (x[i]-mean(x))^2
+  }
+  varians <- dev/(n-1)
+  stdev <- sqrt(varians)
+  spread <- list(Variansi = varians, `Standar Deviasi` = stdev)
+  return(spread)
+}
+result <- sdev(wt)
+print(result)
+
+standar_deviasi <- sd(wt)
+print(standar_deviasi)
+
+# Fungsi untuk pengurutan dari besar ke kecil
+descending <- function(vec) {
+  n <- length(vec)
+  for (i in 1:(n - 1)) {
+    for (j in 1:(n - i)) {
+      if (vec[j] < vec[j + 1]) {
+        temp <- vec[j]
+        vec[j] <- vec[j + 1]
+        vec[j + 1] <- temp
+      }
+    }
+  }
+  return(vec)
+}
+
+# Vektor contoh
+vec <- c(5, 3, 8, 2, 9)
+
+# Memanggil fungsi pengurutan
+sorted_vec <- descending(vec)
+
+# Mencetak hasil pengurutan
+print(sorted_vec)
+
+
+ascending <- function(vec) {
+  n <- length(vec)
+  for (i in 1:(n - 1)) {
+    for (j in 1:(n - i)) {
+      if (vec[j] > vec[j + 1]) {
+        temp <- vec[j]
+        vec[j] <- vec[j + 1]
+        vec[j + 1] <- temp
+      }
+    }
+  }
+  return(vec)
+}
+
+# Vektor contoh
+vec <- c(5, 3, 8, 2, 9)
+
+# Memanggil fungsi pengurutan
+sorted_vec <- ascending(vec)
+
+# Mencetak hasil pengurutan
+print(sorted_vec)
+
+#week4
+geom
+n <- 100
+p <- 0.1
+
+set.seed(100)
+u <- runif(n)
+
+x <- (log(1 - u) / log(1 - p)) - 1
+xcel <- ceiling(log(1 - u) / log(1 - p)) - 1
+head(xcel)
+
+#r
+set.seed(100)
+xgeom <- rgeom(n, p)
+head(xgeom)
+
+#histo
+par(mfrow=c(1,3))
+hist(x,main="Distribusi Geometri Transformasi Invers")
+hist(xcel, main="Distribusi Geometri Transformasi Invers Dibulatkan")
+hist(xgeom,main=" Distribusi Geometri R")
+
+#weibull
+a <- 1
+b <- 0.1
+n1 <- 100
+
+set.seed(100)
+u1 <- runif(n1)
+
+xb <- b * sqrt(-log(1 - u1))/a
+head(xb)
+
+set.seed(100)
+xbull <- rweibull(n1, a, b)
+head(xbull)
+
+par(mfrow=c(1,2))
+hist(xb,main="Distribusi Weibull Transformasi Invers")
+hist(xbull,main="Distribusi Weibull fungsi R")
