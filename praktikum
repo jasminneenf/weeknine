@@ -346,3 +346,140 @@ binomint <- as.integer(u > 1 - p) #variabel yang berisi hasil simulasi yang memb
 mean(binomint)
 var(binomint)
 
+#new
+n <- 5000
+set.seed(1)
+u <- runif(n)
+b <- 2
+a <- 1
+inverse_gamma <- function(u, beta) {
+  return(-beta * log(1 - u))
+}
+gamma_samples <- inverse_gamma(u, b)
+head(gamma_samples)
+
+#punya ciak kuis
+deret_fibonacci_for <- function(n) {
+  fibonacci <- c(0, 1)
+  
+  for (i in 3:n) { 
+    next_fibonacci <- fibonacci[i - 1] + fibonacci[i - 2] 
+    fibonacci <- c(fibonacci, next_fibonacci)  
+  } 
+  
+  return(fibonacci)
+}
+
+deret <- deret_fibonacci_for(10)
+print("Deret Fibonacci:")
+print(deret)
+```
+```{r}
+n <- 5000
+b <- 2
+a <- 1
+
+set.seed(10)
+u <- runif(n)
+
+x <- b*(-log(1-u))^1/a
+head(x)
+```
+
+
+```{r}
+y4 <- rweibull(n, shape = 1, scale = 2)
+head(y4)
+```
+```{r}
+par(mfrow=c(1,2))
+hist(x)
+hist(y4)
+```
+
+```{r}
+# Fungsi untuk menghasilkan deret Fibonacci dengan loop for
+deret_fibonacci_for <- function(n) {
+  fibonacci <- c(0, 1)  # Inisialisasi deret dengan dua angka awal, yaitu 0 dan 1
+  
+  # Loop for untuk menghasilkan deret Fibonacci
+  for (i in 3:n) { #untuk melanjutkan angka ke-3 hingga n
+    next_fibonacci <- fibonacci[i - 1] + fibonacci[i - 2]  # Menghitung angka Fibonacci berikutnya dengan angka sebelumnya ditambah 2 angka sebelumnya
+    fibonacci <- c(fibonacci, next_fibonacci)  # Menambahkan angka Fibonacci baru ke dalam deret, melanjutkan fibonacci yang ada di atas
+  } 
+  
+  return(fibonacci)
+}
+
+# Menampilkan deret Fibonacci dengan panjang 10
+deret <- deret_fibonacci_for(10)
+cat("Deret Fibonacci:", deret, "\n")
+```
+
+```{r}
+# Fungsi untuk menghitung korelasi dari kolom-kolom tertentu dalam dataset
+hitung_korelasi_kolom <- function(dataset, kolom1, kolom2, kolom3) {
+  # Memilih kolom-kolom yang ingin dihitung korelasinya
+  data <- dataset[, c(kolom1, kolom2, kolom3)]
+  
+  # Menghitung korelasi dari kolom-kolom yang dipilih menggunakan fungsi cor()
+  korelasi <- cor(data)
+  
+  return(korelasi)
+}
+
+# Contoh dataset
+# Anda dapat mengganti ini dengan dataset Anda sendiri
+dataset <- data.frame(
+  run_order = 1:5,
+  ambient_temp = c(25, 28, 30, 27, 26),
+  temp = c(30, 32, 34, 31, 29),
+  pressure = c(1013, 1012, 1014, 1011, 1015)
+)
+
+# Kolom-kolom yang ingin dihitung korelasinya
+kolom_ambient_temp <- "ambient_temp"
+kolom_temp <- "temp"
+kolom_pressure <- "pressure"
+
+# Hitung korelasi dari kolom-kolom tertentu dalam dataset
+hasil_korelasi <- hitung_korelasi_kolom(dataset, kolom_ambient_temp, kolom_temp, kolom_pressure)
+
+# Tampilkan hasil korelasi
+print("Matriks Korelasi:")
+print(hasil_korelasi)
+
+```
+```{r}
+# Fungsi untuk menghitung estimasi parameter model regresi
+hitung_estimasi_parameter <- function(X, y) {
+  # Hitung matriks X transpose
+  X_transpose <- t(X)
+  
+  # Hitung matriks X transpose dikali X
+  X_transpose_X <- X_transpose %*% X
+  
+  # Hitung invers dari matriks X transpose dikali X
+  inverse_X_transpose_X <- solve(X_transpose_X)
+  
+  # Hitung matriks X transpose dikali y
+  X_transpose_y <- X_transpose %*% y
+  
+  # Hitung estimasi parameter
+  estimasi_parameter <- inverse_X_transpose_X %*% X_transpose_y
+  
+  return(estimasi_parameter)
+}
+
+# Contoh dataset
+# X adalah matriks desain yang berisi variabel independen
+X <- matrix(c(1, 2, 3, 4, 5), ncol = 1)  # Misalnya, hanya satu variabel independen
+# y adalah vektor respons (variabel dependen)
+y <- c(2, 3, 4, 5, 6)
+
+# Hitung estimasi parameter model regresi
+estimasi_parameter <- hitung_estimasi_parameter(X, y)
+
+# Tampilkan estimasi parameter
+print("Estimasi Parameter Model Regresi:")
+print(estimasi_parameter)
