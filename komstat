@@ -1,0 +1,834 @@
+#Tugas Praktikum M2
+
+```{r}
+# A. DATA LIFEE EXPETANCY
+
+library(readr)
+library(dplyr)
+Life_Expectancy <- read_csv("C:/Users/asus/Downloads/Life Expectancy Data.csv")
+Life_Expectancy
+
+##Jumlah negara berdasarkan status pada tahun 2015
+jumlah_negara_2015 <- filter(Life_Expectancy, Year == 2015)
+jumlah_negara_2015 %>%
+  group_by(Status)%>%
+  summarize(count= n())
+```
+
+```{r}
+##Mean, Median, Min, Max Angka Harapan Hidup (Life Expectancy) dari negara Indonesia berdasarkan tahun 
+df_indonesia <- filter(Life_Expectancy, Country == "Indonesia")
+df_indonesia
+
+Indonesia_mmm <- df_indonesia %>% 
+  group_by(Year) %>% 
+  summarize(mean = mean(`Life expectancy`), 
+            median = median(`Life expectancy`), 
+            min = min(`Life expectancy`), 
+            max = max(`Life expectancy`))
+
+print(Indonesia_mmm)
+```
+
+```{r}
+##Mean, Median, Min, Max GDP berdasarkan status pada Tahun 2010 
+data2010 <- filter(Life_Expectancy, Year == 2010)
+
+data2010$GDP <- as.numeric(data2010$GDP)
+
+median_value <- median(data2010$GDP, na.rm = TRUE)
+
+data2010$GDP[is.na(data2010$GDP)] <- median_value
+
+summary_2010 <- data2010 %>%
+  group_by(Status) %>% 
+  summarize(mean = mean(GDP), 
+            median = median(GDP), 
+            min = min(GDP), 
+            max = max(GDP))
+
+
+summary_2010
+```
+
+```{r}
+#B. DATA REGRESI
+regresi <- read.csv("C:/Users/asus/Downloads/regresi.csv")
+regresi
+
+y <- c(regresi[, 5])
+y
+vec1 <- rep(1, 13)
+x <- cbind(vec1, regresi[,1:4])
+x <- as.matrix(x)
+x
+
+##transpose X
+xT <- t(x)
+xT <- as.matrix(xT)
+xT
+```
+
+```{r}
+##XT dikali X
+xTx <-xT%*%x
+xTx
+
+##inverse xTx
+xTx1 <- solve(xTx)
+print(xTx1)
+
+#inverse dikali XT
+xTx1_xT <- xTx1%*%xT
+xTx1_xT
+
+hasilakhir <- xTx1_xT%*%y
+hasilakhir
+```
+
+#Tugas Praktikum M3
+
+```{r}
+data <- c(5, 2, 9, 1, 8)
+
+#sort
+sort_function <- function(x) {
+  n <- length(x)
+  
+  for (i in 1:(n - 1)) {
+    for (j in 1:(n - i)) {
+      if (x[j] > x[j + 1]) {
+        temp <- x[j]
+        x[j] <- x[j + 1]
+        x[j + 1] <- temp
+      }
+    }
+  }
+  
+  return(x)
+}
+sort <- sort_function(data)
+print(sort)
+```
+
+```{r}
+#median
+get_median <- function(x) {
+  n <- length(x)
+  sorted_x <- sort(x)
+  if (n %% 2 == 1) {
+    median_value <- sorted_x[(n + 1) / 2]
+  } else {
+    median_value <- (sorted_x[n / 2] + sorted_x[(n / 2) + 1]) / 2
+  }
+  return(median_value)
+}
+median_value <- get_median(data)
+print(median_value)
+```
+
+```{r}
+#varsd
+getvarsd <- function(n){
+  n <- length(n)
+  mean_n <- mean(n)
+  
+  var_n <- 0 
+  for (i in 1:n) {
+    var_n <- var_n + (x[i] - mean_n)^2
+  }
+  var_n <- var_n / (n-1)
+  sd_n <- sqrt(var_n)
+  
+  spread <- list(variance = var_n, std_deviation = sd_n)
+  return(spread)
+}
+spread <- (getvarsd(data))
+print(spread)
+```
+
+```{r}
+# Fungsi untuk menghasilkan deret Fibonacci
+deret_fibonacci <- function(n) {
+  fibonacci <- c(0, 1)
+  
+  while(length(fibonacci) < n) {
+    next_fibonacci <- fibonacci[length(fibonacci)] + fibonacci[length(fibonacci) - 1]
+    fibonacci <- c(fibonacci, next_fibonacci)
+  }
+  
+  return(fibonacci)
+}
+
+# Menampilkan deret Fibonacci tidak terurut
+deret <- deret_fibonacci(10)
+cat("Deret Fibonacci sebelum diurutkan:", deret, "\n")
+
+# Mengurutkan deret Fibonacci
+deret_urut <- sort(deret)
+
+# Menampilkan deret Fibonacci setelah diurutkan
+cat("Deret Fibonacci setelah diurutkan:", deret_urut, "\n")
+
+```
+
+#Tugas Praktikum M4
+
+##Distribusi Geometrik
+```{r}
+#Ukuran Sampel
+n3 <- 1000
+p <- 0.5
+
+#Generate U(0,1)
+set.seed(10)
+u3 <- runif(n3)
+
+#hitung X
+x3 <- ceiling(log(1-u3)/log(1-p))-1
+head(x3)
+```
+
+```{r}
+#Membangkitkan X dari fungsi bawaan R
+y3 <- rgeom(n3, prob = p)
+head(y3)
+```
+
+```{r}
+#Visualisasi Histogram
+par(mfrow=c(1,2))
+hist(x3,main="Geo dari Inverse Transform")
+hist(y3,main="Geo dari fungsi runif")
+```
+
+##Distribusi Weibull
+```{r}
+n4 <- 1000
+a <- 1
+b <- 0.5
+
+#Generate U(0,1)
+set.seed(10)
+u4 <- runif(n4)
+
+#Hitung X
+x4 <- b*(-log(1-u4))^1/a
+head(x4)
+```
+
+```{r}
+#Membangkitkan X dari fungsi bawaan R
+y4 <- rweibull(n4, shape = 1, scale = 1)
+head(y4)
+```
+
+```{r}
+#Visualisasi Histogram
+par(mfrow=c(1,2))
+hist(x4,main="Weibull dari Inverse Transform")
+hist(y4,main="Weibull dari fungsi runif")
+```
+
+#Tugas Praktikum M5
+
+##No. 1
+```{r}
+set.seed(100)
+u <- runif(100)
+x <- -2:2
+
+get.x <- function(data) {
+  result <- numeric(length(data))
+
+  for (i in seq_along(data)) {
+    if (data[i] <= 0.2) {
+      result[i] <- -2
+    } else if (data[i] > 0.2 & data[i] <= 0.35) {
+      result[i] <- -1
+    } else if (data[i] > 0.35 & data[i] <= 0.55) {
+      result[i] <- 0
+    } else if (data[i] > 0.55 & data[i] <= 0.9) {
+      result[i] <- 1
+    } else {
+      result[i] <- 2
+    }
+  }
+
+  return(result)
+}
+
+x_values <- get.x(u)
+
+```
+
+```{r}
+dataframe <- data.frame(u, x_values)
+names(dataframe) <- c("u", "x_values")
+
+print(dataframe)
+```
+
+```{r}
+n <- 100
+sample_room <- c(-2, -1, 0, 1, 2)
+chances <- c(0.2, 0.15, 0.20, 0.35, 0.1)
+cumulative <- cumsum(chances)
+
+x_sampling <- sample(sample_room, size = n, replace = TRUE, prob = chances)
+
+min_get <- function(uval) {
+  min(sample_room[cumulative >= uval])
+}
+
+xsim <- sapply(runif(n), min_get)
+
+# Membuat histogram untuk xsim dan x_sampling
+options(repr.plot.width = 10, repr.plot.height = 4)
+par(mfrow = c(1, 2))
+
+hist(xsim)
+
+hist(x_sampling)
+
+options(repr.plot.width = 7, repr.plot.height = 7)
+```
+
+##No. 2
+```{r}
+# Menentukan nilai n dan p
+n <- 10000
+p <- 0.5
+
+# Menentukan nilai kumulatif dan ruang sampel
+cumulative <- c(1 - p, 1)
+sample_room <- c(0, 1)
+
+# Membuat fungsi min_get
+min_get <- function(uval) {
+  min(sample_room[cumulative >= uval])
+}
+
+# Menghasilkan variabel acak
+u <- runif(n)
+
+# Simulasi menggunakan sapply
+xsim <- sapply(u, min_get)
+```
+
+```{r}
+samples <- rbinom(n, size = 1, prob = 0.5)
+```
+
+```{r}
+hist(xsim)
+hist(samples)
+```
+
+##No. 3 (PAKE CDF)
+```{r}
+n <- 100
+p <- 0.75
+u <- runif(n)
+xsim_itm <- log(1 - u, 1 - p)
+
+cdf_geom <- function(i) {
+  return(1 - (1 - p)^(i + 1))
+}
+cumulative <- sapply(0:1000, cdf_geom)
+sample_room <- c(0:1000)
+min_get <- function(uval) {
+  min(min(sample_room[cumulative >= uval]), 1000)
+}
+xsim <- sapply(runif(n), min_get)
+```
+
+```{r}
+options(repr.plot.width = 11, repr.plot.height = 3.5)
+par(mfrow = c(2, 3))
+
+# Histogram untuk rgeom
+hist(rgeom(n, p), main = "rgeom(n, p)", xlab = "Value")
+
+# Histogram untuk xsim_itm
+hist(xsim_itm, main = "xsim_itm", xlab = "Value")
+
+# Histogram untuk floor(xsim_itm)
+hist(floor(xsim_itm), main = "floor(xsim_itm)", xlab = "Value")
+
+# Histogram untuk ceiling(xsim_itm)
+hist(ceiling(xsim_itm), main = "ceiling(xsim_itm)", xlab = "Value")
+
+# Histogram untuk xsim
+hist(xsim, main = "xsim", xlab = "Value")
+
+options(repr.plot.width = 7, repr.plot.height = 7)
+```
+
+##No. 4
+```{r}
+# Set seed untuk menjaga hasil random yang konsisten
+set.seed(100)
+
+# Mendefinisikan jumlah pengamatan dan probabilitas
+n <- 1000
+p <- 0.4
+
+# Membuat vektor acak seragam (uniform)
+u <- runif(n)
+
+# Membuat vektor biner (0 atau 1) dari u
+binom_it <- as.integer(u > 1 - p)
+
+# Menghitung mean dan varians dari binom_it
+print(mean(binom_it))
+print(var(binom_it))
+
+# Membuat vektor acak berdistribusi Binomial
+rbinom_res <- rbinom(10000, size = 1, prob = p)
+
+# Membuat vektor sampel dari distribusi Binomial dengan penggantian
+sampling <- sample(c(0, 1), size = n, replace = TRUE, prob = c(1 - p, p))
+```
+
+```{r}
+deret_fibonacci_for <- function(n) {
+  fibonacci <- c(0, 1)
+  
+  for (i in 3:n) { 
+    next_fibonacci <- fibonacci[i - 1] + fibonacci[i - 2] 
+    fibonacci <- c(fibonacci, next_fibonacci)  
+  } 
+  
+  return(fibonacci)
+}
+
+deret <- deret_fibonacci_for(10)
+print("Deret Fibonacci:")
+print(deret)
+```
+```{r}
+n <- 5000
+b <- 2
+a <- 1
+
+set.seed(10)
+u <- runif(n)
+
+x <- b*(-log(1-u))^1/a
+head(x)
+```
+
+
+```{r}
+y4 <- rweibull(n, shape = 1, scale = 2)
+head(y4)
+```
+```{r}
+par(mfrow=c(1,2))
+hist(x)
+hist(y4)
+```
+
+```{r}
+# Fungsi untuk menghasilkan deret Fibonacci dengan loop for
+deret_fibonacci_for <- function(n) {
+  fibonacci <- c(0, 1)  # Inisialisasi deret dengan dua angka awal, yaitu 0 dan 1
+  
+  # Loop for untuk menghasilkan deret Fibonacci
+  for (i in 3:n) { #untuk melanjutkan angka ke-3 hingga n
+    next_fibonacci <- fibonacci[i - 1] + fibonacci[i - 2]  # Menghitung angka Fibonacci berikutnya dengan angka sebelumnya ditambah 2 angka sebelumnya
+    fibonacci <- c(fibonacci, next_fibonacci)  # Menambahkan angka Fibonacci baru ke dalam deret, melanjutkan fibonacci yang ada di atas
+  } 
+  
+  return(fibonacci)
+}
+
+# Menampilkan deret Fibonacci dengan panjang 10
+deret <- deret_fibonacci_for(10)
+cat("Deret Fibonacci:", deret, "\n")
+```
+
+# Fungsi R bawaan untuk menghitung korelasi
+```{r}
+hitung_korelasi_kolom <- function(dataset, kolom1, kolom2, kolom3) {
+  # Memilih kolom-kolom yang ingin dihitung korelasinya
+  data <- dataset[, c(kolom1, kolom2, kolom3)]
+  
+  # Menghitung korelasi dari kolom-kolom yang dipilih menggunakan fungsi cor()
+  korelasi <- cor(data)
+  
+  return(korelasi)
+}
+
+# Contoh dataset
+# Anda dapat mengganti ini dengan dataset Anda sendiri
+dataset <- data.frame(
+  run_order = 1:5,
+  ambient_temp = c(25, 28, 30, 27, 26),
+  temp = c(30, 32, 34, 31, 29),
+  pressure = c(1013, 1012, 1014, 1011, 1015)
+)
+
+# Kolom-kolom yang ingin dihitung korelasinya
+kolom_ambient_temp <- "ambient_temp"
+kolom_temp <- "temp"
+kolom_pressure <- "pressure"
+
+# Hitung korelasi dari kolom-kolom tertentu dalam dataset
+hasil_korelasi <- hitung_korelasi_kolom(dataset, kolom_ambient_temp, kolom_temp, kolom_pressure)
+
+# Tampilkan hasil korelasi
+print("Matriks Korelasi:")
+print(hasil_korelasi)
+
+```
+#fungsi buatan korelasi
+```{r}
+Y <- c(225, 100, 230, 106, 277, 148, 197, 138, 137, 117, 164, 181, 222, 227, 232)
+X1_ind <- c(54, 23, 58, 25, 68, 37, 49, 34, 33, 29, 39, 43, 53, 54, 57)
+
+korelasi <- function(x) {
+  n <- length(x)
+  x_bar <- mean(x)
+  y_bar <- mean(Y)
+  
+  y_deviations <- Y - y_bar
+  sd_y <- sqrt(sum(y_deviations^2) / (n - 1))
+  
+  x_deviations <- x - x_bar
+  sd_x <- sqrt(sum(x_deviations^2) / (n - 1))
+  
+  xy_sum <- sum(y_deviations * x_deviations)
+  xy <- xy_sum / ((n - 1) * sd_y * sd_x)
+  
+  return(xy)
+}
+
+temperature <- X1_ind
+kor <- korelasi(temperature)
+kor
+
+kor_r <- cor(temperature, Y, method = 'pearson')
+kor_r
+```
+
+```{r}
+# Fungsi untuk menghitung estimasi parameter model regresi
+hitung_estimasi_parameter <- function(X, y) {
+  # Hitung matriks X transpose
+  X_transpose <- t(X)
+  
+  # Hitung matriks X transpose dikali X
+  X_transpose_X <- X_transpose %*% X
+  
+  # Hitung invers dari matriks X transpose dikali X
+  inverse_X_transpose_X <- solve(X_transpose_X)
+  
+  # Hitung matriks X transpose dikali y
+  X_transpose_y <- X_transpose %*% y
+  
+  # Hitung estimasi parameter
+  estimasi_parameter <- inverse_X_transpose_X %*% X_transpose_y
+  
+  return(estimasi_parameter)
+}
+
+# Contoh dataset
+# X adalah matriks desain yang berisi variabel independen
+X <- matrix(c(1, 2, 3, 4, 5), ncol = 1)  # Misalnya, hanya satu variabel independen
+# y adalah vektor respons (variabel dependen)
+y <- c(2, 3, 4, 5, 6)
+
+# Hitung estimasi parameter model regresi
+estimasi_parameter <- hitung_estimasi_parameter(X, y)
+
+# Tampilkan estimasi parameter
+print("Estimasi Parameter Model Regresi:")
+print(estimasi_parameter)
+
+```
+
+#determinan dan invers
+```{r}
+some_matrix_T <- matrix(c(1, 2, 3, 4), ncol=2, byrow=T)
+some_matrix_T
+
+some_matrix_F <- matrix(c(1,2,3,4), ncol=2, byrow=F)
+some_matrix_F
+```
+```{r}
+get_determinant <- function (mat) {
+  # [row, col]
+  a <- some_matrix_F[1,1]
+  b <- some_matrix_F[1,2]
+  c <- some_matrix_F[2,1]
+  d <- some_matrix_F[2,2]
+  return (a*d - b*c)
+}
+
+get_determinant(some_matrix_F)
+```
+
+
+```{r}
+get_inverse <- function (mat) {
+  a <- some_matrix_F[1,1]
+  b <- some_matrix_F[1,2]
+  c <- some_matrix_F[2,1]
+  d <- some_matrix_F[2,2]
+
+  det <- get_determinant (mat)
+  rearranged <- matrix(c(d, -b, -c, a), ncol = 2, byrow = T)
+  return (1/det * rearranged)
+}
+```
+
+```{r}
+get_inverse(some_matrix_T)
+```
+```{r}
+get_determinant(some_matrix_F)
+```
+
+```{r}
+#R
+det(some_matrix_F)
+```
+```{r}
+get_inverse(some_matrix_F)
+```
+```{r}
+solve(some_matrix_T)
+```
+
+#Skewness dan kurtosis
+```{r}
+data <- c(0.14122, 0.00934, 1.05521, 0.16594, 0.04978, 0.00130, 0.18597, 0.24940, 0.15359, 0.14866, 0.45258, 0.40487, 0.08821, 0.54919, 0.10068, 0.90908, 0.91219, 0.08735, 0.00419, 0.08565)
+```
+
+```{r}
+calculate_skewness <- function(x) {
+  n <- length(x)
+  mean_x <- mean(x)
+  sd_x <- sd(x)
+  skewness <- sum((x - mean_x)^3) / (n * sd_x^3)
+  skewness <- (sum((x-mean(x))^3)/n)/(sum((x-mean(x))^2)/n)^(3/2)
+  return(skewness)
+}
+
+calculate_kurtosis <- function(x) {
+  n <- length(x)
+  mean_x <- mean(x)
+  sd_x <- sd(x)
+  kurtosis <- sum((x - mean_x)^4) / (n * sd_x^4)
+  return(kurtosis)
+}
+
+skew <- calculate_skewness (data)
+kurt <- calculate_kurtosis (data)
+
+print(paste("Skewness:", skew))
+print(paste("Kurtosis:", kurt))
+```
+#Skewness
+- negatif -> negative skewed (left skewed)
+- 0 -> balance
+- positif -> positive skewed (right skewed)
+
+#Kurtosis
+- less than 3 - platykurtik -> gepeng
+- 3 - mesokurtik
+- more than 3 - leptokurtik -> ngepeak tinggi di tengah
+
+```{r}
+install.packages("moments")
+library(moments)
+
+print (paste("skew",skewness(data)))
+print (paste("kurt", kurtosis(data)))
+```
+
+```{r}
+#(1,2,3,4,5)
+
+#Ulangi 1000x
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+#kamu ngambil 10 acak -> hitung rata rata -> kamu catet -> kamu balikin lg
+
+install.packages("EnvStats")
+library(EnvStats)
+```
+#pareto
+```{r}
+set.seed(333)
+# set seed agar bisa reproducible
+
+n <- 100000
+u <- runif(n)
+# generate runif sebanyak n kali dalam u
+
+var_theta <- 1200 # shape
+var_eta <- 2000 # location
+
+u <- runif(n)
+numer <- var_eta
+denom <- (1-u)^(1/var_theta)
+x <- numer/denom
+# x sebagai hasil fungsi inverse di atas
+
+hist(x, freq = T) # plot X
+```
+```{r}
+n <- 1000
+pareto <- rpareto(n, location = 1, shape = 2)
+hist(pareto)
+```
+
+```{r}
+n <- 100
+m <- 1000
+
+n_total <- 10000
+
+u <- runif(n_total)
+numer <- var_eta
+denom <- (1-u)^(1/var_theta)
+u <- runif(n_total)
+x <- numer/denom
+
+n100 <- rep(NA, m)
+for (i in 1:m) {
+  # my_sample <- rbinom(1000, size = 10, prob = 0.3)
+  # my_sample <- runif(1000)
+  # my_sample <- rexp(n, 10)
+  # my_sample <- rpareto(n, var_eta, var_theta)
+  u <- runif(n_total)
+  numer <- var_eta
+  denom <- (1-u)^(1/var_theta)
+  x <- numer/denom
+
+  n100[i] <- mean(x)
+}
+
+hist(n100)
+```
+
+```{r}
+shapiro.test(n100)
+```
+#if diskrit
+- habis di generate, bs di floor/ceil <br>
+
+
+#elif kontinu
+- yauda biarin
+
+#Teorema bayes
+```{r}
+p_M1_cacat <- 0.02  # Probabilitas produk cacat dari mesin M1
+p_M2_cacat <- 0.03  # Probabilitas produk cacat dari mesin M2
+p_M3_cacat <- 0.02  # Probabilitas produk cacat dari mesin M3
+
+prop_M1 <- 0.3  # Proporsi produk dari mesin M1
+prop_M2 <- 0.45  # Proporsi produk dari mesin M2
+prop_M3 <- 0.25  # Proporsi produk dari mesin M3
+
+p_cacat <- p_M1_cacat * prop_M1 + p_M2_cacat * prop_M2 + p_M3_cacat * prop_M3
+p_cacat
+```
+
+```{r}
+teoremaBayes <- function(pA, pB, pB_A) {
+  pA_B <- pA * pB_A / pB
+  return(pA_B)
+}
+
+p_truck <- 0.4
+p_cars <- 0.6
+car_acc <- 40/200000
+truck_acc <- 50/200000
+
+p_b <- (truck_acc*p_truck) + (car_acc*p_cars)
+p_b
+
+p_ab <- teoremaBayes(p_truck, p_b, truck_acc) 
+p_ab
+```
+
+```{r}
+B <- 0.014
+pv <- 0.995
+pnv <- 0.1
+
+A <- pv*B + pnv*(1-B)
+A
+
+p_ba <- (pv*B)/A
+p_ba
+```
+#rerata
+```{r}
+rerata_a <- c()
+
+for (i in 1:100) {
+  rerata_a <- c(rerata_a, mean(rchisq(50, 50)))
+}
+shapiro.test(rerata_a)
+
+rerata_b <- c()
+
+set.seed(1500)
+for (i in 1:100) {
+  rerata_b <- c(rerata_b, mean(rchisq(500, 50)))
+}
+shapiro.test(rerata_b)
+
+rerata_c <- c()
+
+set.seed(1500)
+for (i in 1:100) {
+  rerata_c <- c(rerata_c, mean(rchisq(5000, 50)))
+}
+shapiro.test(rerata_c)
+```
+```{r}
+par(mfrow=c(1,3))
+hist(rerata_a)
+hist(rerata_b)
+hist(rerata_c)
+```
+
+```{r}
+a1 <- c()
+for (i in 1:100) {
+  a1 <- c(a1, mean(rexp(20, 0.25)))
+}
+shapiro.test(a1)
+
+a2 <- c()
+set.seed(1500)
+for (i in 1:100) {
+  a2 <- c(a2, mean(rexp(200, 0.25)))
+}
+shapiro.test(a2)
+
+a3 <- c()
+set.seed(1500)
+for (i in 1:100) {
+  a3 <- c(a3, mean(rexp(2000, 0.25)))
+}
+shapiro.test(a3)
+```
